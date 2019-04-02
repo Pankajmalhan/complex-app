@@ -6,10 +6,10 @@ before_install:
 script:
   - docker run pankajmalhan/react-test npm run test -- --coverage
 after_success:
-  - docker build -t pankajmalhan/multi-client -f ./client
-  - docker build -t pankajmalhan/multi-serber -f ./server
-  - docker build -t pankajmalhan/multi-worker -f ./worker
-  - docker build -t pankajmalhan/multi-nginx -f ./nginx
+  - docker build -t pankajmalhan/multi-nginx -f ./client/Dev.Dockerfile ./nginx
+  - docker build -t pankajmalhan/multi-server -f ./client/Dev.Dockerfile ./server
+  - docker build -t pankajmalhan/multi-client -f ./client/Dev.Dockerfile ./client
+  - docker build -t pankajmalhan/mulri-worker -f ./client/Dev.Dockerfile ./worker
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   - docker push pankajmalhan/multi-client
   - docker push pankajmalhan/multi-worker
