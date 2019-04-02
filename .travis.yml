@@ -1,0 +1,17 @@
+sudo: required
+services:
+  - docker
+before_install:
+  - docker build -t pankajmalhan/react-test -f Dev.Dockerfile .
+script:
+  - docker run pankajmalhan/react-test npm run test -- --coverage
+after_success:
+  - docker build -t pankajmalhan/multi-client -f ./client
+  - docker build -t pankajmalhan/multi-serber -f ./server
+  - docker build -t pankajmalhan/multi-worker -f ./worker
+  - docker build -t pankajmalhan/multi-nginx -f ./nginx
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push pankajmalhan/multi-client
+  - docker push pankajmalhan/multi-worker
+  - docker push pankajmalhan/multi-server
+  - docker push pankajmalhan/multi-nginx
