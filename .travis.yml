@@ -11,8 +11,19 @@ after_success:
   - docker build -t pankajchoudhary/multi-client  ./client
   - docker build -t pankajchoudhary/multi-worker  ./worker
 deploy:
-  provider:  script
-  script: bash docker_push.sh
-  on:
-    branch:
-      master
+  - provider:  script
+    script: bash docker_push.sh
+    on:
+      branch:
+        master
+  - provider: elasticbeanstalk
+    access_key_id: 
+      secure: "${AWS_KEY}"
+    secret_access_key:
+      secure: "${AWS_PASSWORD}"
+    region: "ap-south-1"  
+    app: "multi-container"
+    env: "MultiContainer-env"
+    bucket_name: "elasticbeanstalk-ap-south-1-806107407018"
+    on:
+      branch: master
