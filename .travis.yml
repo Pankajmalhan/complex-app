@@ -10,9 +10,4 @@ after_success:
   - docker build -t pankajchoudhary/multi-server  ./server
   - docker build -t pankajchoudhary/multi-client  ./client
   - docker build -t pankajchoudhary/multi-worker  ./worker
-deploy:
-  - provider: script
-  script: bash docker_push.sh
-  on:
-  branch: master
-  tags: true
+
