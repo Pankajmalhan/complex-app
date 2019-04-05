@@ -1,0 +1,29 @@
+sudo: required
+services:
+  - docker
+before_install:
+  - docker build -t pankajchoudhary/react-test -f ./client/Dev.Dockerfile ./client
+script:
+  - docker run pankajchoudhary/react-test npm run test -- --coverage
+after_success:
+  - docker build -t pankajchoudhary/multi-nginx  ./nginx
+  - docker build -t pankajchoudhary/multi-server  ./server
+  - docker build -t pankajchoudhary/multi-client  ./client
+  - docker build -t pankajchoudhary/multi-worker  ./worker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push pankajchoudhary/multi-client
+  - docker push pankajchoudhary/multi-worker
+  - docker push pankajchoudhary/multi-server
+  - docker push pankajchoudhary/multi-nginx
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: 
+    secure: "${AWS_KEY}"
+  secret_access_key:
+    secure: "${AWS_PASSWORD}"
+  region: "ap-south-1"  
+  app: "multi-container"
+  env: "MultiContainer-env"
+  bucket_name: "elasticbeanstalk-ap-south-1-806107407018"
+  on:
+    branch: master

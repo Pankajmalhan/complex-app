@@ -10,8 +10,9 @@ after_success:
   - docker build -t pankajchoudhary/multi-server  ./server
   - docker build -t pankajchoudhary/multi-client  ./client
   - docker build -t pankajchoudhary/multi-worker  ./worker
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  - docker push pankajchoudhary/multi-client
-  - docker push pankajchoudhary/multi-worker
-  - docker push pankajchoudhary/multi-server
-  - docker push pankajchoudhary/multi-nginx
+deploy:
+  - provider: script
+  script: bash docker_push.sh
+  on:
+  branch: master
+  tags: true
